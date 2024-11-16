@@ -21,55 +21,69 @@ GUILD_ID = os.getenv("GUILD_ID")
 DEV_ID = os.getenv("DEV_ID")
 
 # Intents
-intents = discord.Intents.default()
-intents.members = True
-intents.message_content = True
+INTENTS = discord.Intents.default()
+INTENTS.members = True
+INTENTS.message_content = True
 
-bot = commands.Bot(command_prefix="$", intents=intents)
+BOT = commands.Bot(command_prefix="$", intents=INTENTS)
 
 # Commands
-@bot.command()
+@BOT.command()
 async def ranking(ctx):
     member_names = []
+
     for member in ctx.guild.members:
         if not member.bot:
             member_names.append(member.name)   
+
     await ctx.send(member_names)
     
-@bot.command()
+@BOT.command()
 async def insignias(ctx, arg):
     await ctx.send(arg)
     
-@bot.command()
+@BOT.command()
 async def darinsignia(ctx, arg):
     await ctx.send(arg)
 
 # Events
-@bot.event
+@BOT.event
 async def on_ready():
-    print(f"Logged in as {bot.user.name}")
+    print(f"Logged in as {BOT.user.name}")
     print("Bot is ready to use")
     
-    guild = bot.get_guild(GUILD_ID)
+    guild = BOT.get_guild(GUILD_ID)
     if guild == None:
-        guild = await bot.fetch_guild(GUILD_ID) # if guild not in cache
+        guild = await BOT.fetch_guild(GUILD_ID) # if guild not in cache
     
     members = [member async for member in guild.fetch_members(limit=None)]
     users = []
-    for member in members:
-        if not member.bot and str(member.id) not in [row[0] for row in WORKSHEET_MIEMBROS.get_all_values()] and str(member.id) != str(DEV_ID):
-            users.append([str(member.id), member.name, ""])
+    rows = WORKSHEET_MIEMBROS.get_all_values()
     
+    for index, member in enumerate(members):
+        if rows[1:] != [] and not member.bot and str(member.id) not in [row[0] for row in rows[1:]] and str(member.id) != str(DEV_ID):
+            users.append([str(member.id), member.name, ""])
+                        
+            # borrar usuarios que no estan en la lista
+            
+        elif not member.bot and str(member.id) != str(DEV_ID):
+            users.append([str(member.id), member.name, ""])
+
     if users:
         WORKSHEET_MIEMBROS.append_rows(users)
+        
+    # for index, row in enumerate(rows[1:] , start=2):
+    #     if row[0] not in str(users[index - 1][0]):
+    #         WORKSHEET_MIEMBROS.delete_rows(index)
+    #         print(f"Deleted row: {index}")
     
-@bot.event
+@BOT.event
 async def on_member_join(member):
     if not member.bot:
         print(f"New member joined: Name: {member.name} ID: {member.id}")
         WORKSHEET_MIEMBROS.append_row([str(member.id), member.name, ""])
     
-@bot.event
+@BOT.event
 async def on_member_remove(user):
     print(f"Member left: Name: {user} ID: {user.id}")
     rows = WORKSHEET_MIEMBROS.get_all_values()
@@ -80,4 +94,4 @@ async def on_member_remove(user):
             print(f"Deleted row: {index}")
             break
 
-bot.run(TOKEN)
+BOT.run(TOKEN)
