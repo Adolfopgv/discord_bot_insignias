@@ -30,6 +30,7 @@ BOT = commands.Bot(command_prefix="$", intents=INTENTS)
 # Commands
 @BOT.command()
 async def ranking(ctx):
+    # Imprimir los miembros ordenados por número de insignias
     member_names = []
 
     for member in ctx.guild.members:
@@ -51,11 +52,25 @@ async def insignias(ctx, arg: str = ""):
         
         if arg in member_names:
             # Imprimir las insignias de un miembro
-            print(arg)
-        
+            table = f"{arg}\n---------------\n"
+            for member in member_rows:
+                if arg == member[1].strip():
+                    insignias = member[2].replace(", ", "\n")
+                    table += f"{insignias}\n"
+                    await ctx.send(table)
+                    break
+                
         elif arg in insignias_names:
             # Imprimir todo sobre una insignia
-            print(arg)
+            table = f"{arg}\n---------------\n"
+            for insignia in insignias_rows:
+                if arg == insignia[0].strip():
+                    table += f"{insignia[1].strip()}\n{insignia[2].strip()}"
+                    await ctx.send(table)
+                    break
+                
+        else:
+            await ctx.send(f"No existe ninguna insignia o miembro llamado {arg}")
     else:
         # Solo imprimir las insignias
         table = "Nombre Insignia\n---------------\n"
