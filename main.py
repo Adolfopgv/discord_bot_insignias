@@ -31,13 +31,11 @@ BOT = commands.Bot(command_prefix="$", intents=INTENTS)
 @BOT.command()
 async def ranking(ctx):
     # Imprimir los miembros ordenados por número de insignias
-    member_names = []
+    member_rows = WORKSHEET_MIEMBROS.get_all_values()
+    member_names_insignias = [row[1].strip() and row[2].strip() for row in member_rows[1:]]
+    print(member_names_insignias)
 
-    for member in ctx.guild.members:
-        if not member.bot:
-            member_names.append(member.name)   
-
-    await ctx.send(member_names)
+    # await ctx.send(member_names)
     
 @BOT.command()
 async def insignias(ctx, arg: str = ""):
@@ -47,8 +45,12 @@ async def insignias(ctx, arg: str = ""):
     if arg != "":
         member_rows = WORKSHEET_MIEMBROS.get_all_values()
         
-        member_names = [row[1].strip() for row in member_rows[1:]]
-        member_insignias = [row[2].strip() for row in member_rows[1:]]
+        member_names = []
+        member_insignias = []
+        
+        for row in member_rows[1:]:
+            member_names.append(row[1].strip())
+            member_insignias.append(row[2].strip())
         
         if arg in member_names:
             # Imprimir las insignias de un miembro
