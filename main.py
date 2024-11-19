@@ -30,15 +30,43 @@ BOT = commands.Bot(command_prefix="$", intents=INTENTS)
 # Commands
 @BOT.command()
 async def ranking(ctx):
+    # FALTA EL ERROR DEL INDEX Y EL TEXTO EN CURSIVA
+    # SOLO PONER LOS 5 PRIMEROS
     # Imprimir los miembros ordenados por número de insignias
     member_rows = WORKSHEET_MIEMBROS.get_all_values()
-    member_names_insignias = [row[1].strip() and row[2].strip() for row in member_rows[1:]]
-    print(member_names_insignias)
-
-    # await ctx.send(member_names)
+    member_names = []
+    member_insignias = []
+        
+    for row in member_rows[1:]:
+        member_names.append(row[1].strip())
+        member_insignias.append(row[2].strip())
     
+    member_name_insignias = [
+        (name, insignias, len(insignias.split(", ")) if insignias else 0)
+        for name, insignias in zip(member_names, member_insignias)
+    ]
+    
+    sort_insignias = sorted(member_name_insignias, key=lambda x: x[2], reverse=True)
+    
+    table = f"# Ranking\n---------\n"
+    for index, name_insignia in enumerate(sort_insignias):
+        if index == 0:
+            table += f":first_place:{name_insignia[0]} | {name_insignia[1]}\n"
+        elif index == 1:
+            table += f":second_place:{name_insignia[0]} | {name_insignia[1]}\n"
+        elif index == 2:
+            table += f":third_place:{name_insignia[0]} | {name_insignia[1]}\n"
+        elif name_insignia[1] == "":
+            table += f"{index}º {name_insignia[0]} | No tiene insignias\n"
+        else:
+            table += f"{index}º {name_insignia[0]} | {name_insignia[1]}\n"
+    
+    await ctx.send(table)
+            
 @BOT.command()
 async def insignias(ctx, arg: str = ""):
+    # FALTA CONTROLAR CUANDO NO HAY INSIGNIAS
+    # CONTROLAR EL TEMA DE LOS EMOJIS AL ESCRIBIRLO EN DISCORD
     insignias_rows = WORKSHEET_INSIGNIAS.get_all_values()
     insignias_names = [row[0].strip() for row in insignias_rows[1:]]
 
@@ -54,7 +82,7 @@ async def insignias(ctx, arg: str = ""):
         
         if arg in member_names:
             # Imprimir las insignias de un miembro
-            table = f"{arg}\n---------------\n"
+            table = f"# {arg}\n---------------\n"
             for member in member_rows:
                 if arg == member[1].strip():
                     insignias = member[2].replace(", ", "\n")
@@ -64,7 +92,7 @@ async def insignias(ctx, arg: str = ""):
                 
         elif arg in insignias_names:
             # Imprimir todo sobre una insignia
-            table = f"{arg}\n---------------\n"
+            table = f"# {arg}\n---------------\n"
             for insignia in insignias_rows:
                 if arg == insignia[0].strip():
                     table += f"{insignia[1].strip()}\n{insignia[2].strip()}"
@@ -75,7 +103,7 @@ async def insignias(ctx, arg: str = ""):
             await ctx.send(f"No existe ninguna insignia o miembro llamado {arg}")
     else:
         # Solo imprimir las insignias
-        table = "Nombre Insignia\n---------------\n"
+        table = "# Nombre Insignia\n---------------\n"
         for row in insignias_names:
             table += f"{row}\n"
 
@@ -84,11 +112,17 @@ async def insignias(ctx, arg: str = ""):
         
 @BOT.command()
 async def darinsignia(ctx, *arg):
+    # CONTROLAR QUE SOLO LO HAGA CLARA
     member_rows = WORKSHEET_MIEMBROS.get_all_values()
     insignias_rows = WORKSHEET_INSIGNIAS.get_all_values()
     
-    member_names = [row[1].strip() for row in member_rows[1:]]
-    member_insignias = [row[2].strip() for row in member_rows[1:]]
+    member_names = []
+    member_insignias = []
+        
+    for row in member_rows[1:]:
+        member_names.append(row[1].strip())
+        member_insignias.append(row[2].strip())
+        
     insignias_names = [row[0].strip() for row in insignias_rows[1:]]
     
     if arg[0].strip() not in insignias_names and arg[1].strip() not in member_names:
@@ -116,6 +150,8 @@ async def crearinsignia(ctx, *arg):
 # Events
 @BOT.event
 async def on_message(message):
+    # CONTROLAR QUE SOLO LO HAGA CLARA
+    # CONTROLAR LOS ESPACIOS EN TODO
     await BOT.process_commands(message)
     if message.content.startswith("$crearinsignia"):
         res = message.content.split(" ")[1:]
