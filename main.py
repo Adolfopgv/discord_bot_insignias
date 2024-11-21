@@ -88,13 +88,12 @@ async def help(ctx):
     help_message += " - Ejemplo: $insignias laxarc\n\n"
     help_message += "$insignias -- Imprime todas las insignias\n\n"
 
-    if ctx.author.id == GUILD_OWNER_ID:
-        help_message += "ADMINISTRADOR\n"
-        help_message += "-------------\n"
-        help_message += "$darinsignia [nombre de la insignia] [nombre del miembro]\n"
-        help_message += " - Ejemplo: $darinsignia \"Nomura cabron\" laxarc\n\n"
-        help_message += "$crearinsignia [nombre de la insignia] [logro de la insignia] imagen adjunta\n"
-        help_message += " - Ejemplo: $crearinsignia \"Nomura cabron\" \"Leer la historia entera de KH y entenderla\" adjuntar imagen con el + de discord\n\n"
+    help_message += "ADMINISTRADOR\n"
+    help_message += "-------------\n"
+    help_message += "$darinsignia [nombre de la insignia] [nombre del miembro]\n"
+    help_message += " - Ejemplo: $darinsignia \"Nomura cabron\" laxarc\n\n"
+    help_message += "$crearinsignia [nombre de la insignia] [logro de la insignia] imagen adjunta\n"
+    help_message += " - Ejemplo: $crearinsignia \"Nomura cabron\" \"Leer la historia entera de KH y entenderla\" adjuntar imagen con el + de discord\n\n"
     help_message += "```"
     await ctx.send(help_message)
 
