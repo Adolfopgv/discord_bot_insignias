@@ -1,4 +1,5 @@
 import os
+import webserver
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -289,4 +290,5 @@ async def on_member_remove(user):
                 print(f"Deleted row: {index}")
                 break
 
+webserver.keep_alive()
 BOT.run(TOKEN)
