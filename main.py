@@ -172,7 +172,7 @@ async def insignias(ctx, arg: str = ""):
         
 @BOT.command()
 async def darinsignia(ctx, *, arg):
-    if ctx.author.id == GUILD_OWNER_ID:
+    if str(ctx.author.id).strip() == str(GUILD_OWNER_ID).strip():
         parsed_args = shlex.split(arg)
         
         if len(parsed_args) < 2:
@@ -212,7 +212,7 @@ async def darinsignia(ctx, *, arg):
 
 @BOT.command()
 async def crearinsignia(ctx, *arg):
-    if ctx.author.id == GUILD_OWNER_ID:
+    if str(ctx.author.id).strip() == str(GUILD_OWNER_ID).strip():
         print("Insignia creada")
     else:
         print("Solo el propietario puede crear insignias")
@@ -225,7 +225,7 @@ async def on_message(message):
         return
     
     if message.content.startswith("$crearinsignia"):
-        if message.author.id != GUILD_OWNER_ID:
+        if str(message.author.id).strip() != str(GUILD_OWNER_ID).strip():
             return await message.channel.send("Solo el propietario puede crear insignias")
         res = message.content[len("$crearinsignia "):]
         parsed_res = shlex.split(res)
