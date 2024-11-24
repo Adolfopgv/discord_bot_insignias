@@ -6,5 +6,5 @@ def application(environ, start_response):
     return ['Server is running!'.encode('utf-8')]
 
 def start_server():
-    server = make_server('localhost', 8000, application)
+    server = make_server("0.0.0.0", 8080, application)
     server.serve_forever()
