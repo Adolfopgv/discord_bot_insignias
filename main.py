@@ -8,6 +8,7 @@ import requests
 import gspread
 import re
 import shlex
+import threading
 
 # Google Sheets config
 SERVICE_ACCOUNT = gspread.service_account(filename="discord-bot-insignias-2507749f19b3.json")
@@ -59,6 +60,9 @@ def clean_insignias_rows(insignias_rows):
         insignias_names.append(row[0].strip())
     
     return insignias_names, clean_insignias_names
+
+def start_webserver():
+    webserver.start_server()
 
 # Commands
 @BOT.command()
@@ -290,5 +294,6 @@ async def on_member_remove(user):
                 print(f"Deleted row: {index}")
                 break
 
-webserver.start_server()
+webserver_thread = threading.Thread(target=start_webserver)
+webserver_thread.start()
 BOT.run(TOKEN)
