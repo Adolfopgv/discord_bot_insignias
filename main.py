@@ -290,5 +290,5 @@ async def on_member_remove(user):
                 print(f"Deleted row: {index}")
                 break
 
-webserver.keep_alive()
+webserver.start_server()
 BOT.run(TOKEN)

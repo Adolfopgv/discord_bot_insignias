@@ -1,15 +1,10 @@
-from flask import Flask
-from threading import Thread
+from wsgiref.simple_server import make_server
 
-app = Flask(" ")
+def application(environ, start_response):
+    headers = [('Content-Type', 'text/plain; charset=utf-8')]
+    start_response('200 OK', headers)
+    return ['Server is running!'.encode('utf-8')]
 
-@app.route("/")
-def index():
-    return "Server is running"
-
-def run():
-    app.run(host="0.0.0.0", port=8080)
-    
-def keep_alive():
-    server = Thread(target=run)
-    server.start()
+def start_server():
+    server = make_server('localhost', 8000, application)
+    server.serve_forever()
